@@ -7,8 +7,8 @@ from time import sleep
 from requests import get
 from bs4 import BeautifulSoup
 
-SAVINGS_RATE_TABLE_URL = 'https://www4.bcb.gov.br/pec/poupanca/poupnca.asp'
-SIXTY_SECONDS = 5 
+SAVINGS_RATE_TABLE_URL = 'https://www4.bcb.gov.br/pec/poupanca/poupanca.asp'
+SIXTY_SECONDS = 60
 
 def get_page(url: str):
     strike_cnt = 0
@@ -16,11 +16,11 @@ def get_page(url: str):
         get_page = get(url)
         if get_page.status_code != 200:
             strike_cnt += 1
-            print('Não foi possível acessar a página. Aguarde...')
+            print('Unable to access page. Wait...')
             sleep(SIXTY_SECONDS)
         else:
             return get_page.content
-    print('Não foi possível acessar a página. Tente novamente mais tarde')
+    print('Unable to access page. Try again later')
     exit(1)
             
 savings_rate_page = get_page(SAVINGS_RATE_TABLE_URL)
