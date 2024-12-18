@@ -3,11 +3,29 @@
 # If the request fails, try again 3 times, with a 60 second interval between
 # the requests, before prompting an error message
 
-import requests
+from time import sleep
+from requests import get
 from bs4 import BeautifulSoup
 
-savings_rate_page = requests.get('https://www4.bcb.gov.br/pec/poupanca/poupanca.asp')
-soup = BeautifulSoup(savings_rate_page.content, 'html.parser')
+SAVINGS_RATE_TABLE_URL = 'https://www4.bcb.gov.br/pec/poupanca/poupnca.asp'
+SIXTY_SECONDS = 5 
+
+def get_page(url: str):
+    strike_cnt = 0
+    while strike_cnt < 3:
+        get_page = get(url)
+        if get_page.status_code != 200:
+            strike_cnt += 1
+            print('Não foi possível acessar a página. Aguarde...')
+            sleep(SIXTY_SECONDS)
+        else:
+            return get_page.content
+    print('Não foi possível acessar a página. Tente novamente mais tarde')
+    exit(1)
+            
+savings_rate_page = get_page(SAVINGS_RATE_TABLE_URL)
+
+soup = BeautifulSoup(savings_rate_page, 'html.parser')
 
 savings_rate_table = soup.find('table')
 
